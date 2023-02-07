@@ -8,6 +8,7 @@ readme = "README.md"
 [tool.poetry.dependencies]
 python = "^3.11.1"
 aiofiles = "^22.1.0"
+configargparse = "^1.5.3"
 
 
 [tool.poetry.group.dev.dependencies]

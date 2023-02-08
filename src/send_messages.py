@@ -13,7 +13,7 @@ from utils import read_file
 async def main() -> None:
     parser = create_sender_parser()
     args = parser.parse_args()
-    chat_host, chat_port, message = args.host, args.port, args.message
+    chat_host, chat_port = args.host, args.port
 
     stream_reader, stream_writer = await asyncio.open_connection(chat_host, chat_port)
 
@@ -35,7 +35,17 @@ async def main() -> None:
         await stream_writer.wait_closed()
         return
 
-    await submit_message(stream_writer, message, '\n')
+    if args.__dict__.get('interactive'):
+        while True:
+            message = await aioconsole.ainput('> ')
+            await submit_message(stream_writer, message, '\n')
+    elif message := args.__dict__.get('message'):
+        await submit_message(stream_writer, message, '\n')
+    else:
+        await aioconsole.ainput(
+            'You need to specify a message or enable interactive mode.'
+        )
+
     stream_writer.close()
     await stream_writer.wait_closed()
 

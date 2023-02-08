@@ -19,7 +19,7 @@ async def main() -> None:
     args = parser.parse_args()
     chat_host, chat_port = args.host, args.port
 
-    stream_reader, stream_writer = await connect_to_chat(chat_host, chat_port)
+    stream_reader, stream_writer = await asyncio.open_connection(chat_host, chat_port)
 
     registered_user_data = await register(stream_reader, stream_writer)
 

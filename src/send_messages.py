@@ -19,7 +19,7 @@ async def main() -> None:
     args = parser.parse_args()
     chat_host, chat_port, message = args.host, args.port, args.message
 
-    stream_reader, stream_writer = await connect_to_chat(chat_host, chat_port)
+    stream_reader, stream_writer = await asyncio.open_connection(chat_host, chat_port)
 
     token_filepath = os.path.join(Path(__file__).parent.parent.resolve(), '.token')
     if not os.path.isfile(token_filepath):

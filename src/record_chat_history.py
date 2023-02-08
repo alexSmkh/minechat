@@ -24,7 +24,7 @@ async def main() -> None:
     args = parser.parse_args()
     chat_host, chat_port, history_filepath = args.host, args.port, args.history
 
-    stream_reader, _ = await connect_to_chat(chat_host, chat_port)
+    stream_reader, _ = await asyncio.open_connection(chat_host, chat_port)
 
     await asyncio.gather(
         record_chat_history(stream_reader, history_filepath),

@@ -1,7 +1,8 @@
 import asyncio
+import json
 import logging
-from chat_api import connect_to_chat
 
+from chat_api import connect_to_chat
 
 logger = logging.getLogger(__file__)
 
@@ -16,8 +17,15 @@ async def main() -> None:
     message = await stream_reader.readline()
     logger.debug(message.decode())
 
-    stream_writer.write(b'0d46d7b6-a773-11ed-ad76-0242ac110002' + b'\n')
+    stream_writer.write(b'0d46d7b6-a773-11ed-ad76-0242ac11000' + b'\n')
     await stream_writer.drain()
+
+    message = await stream_reader.readline()
+    if json.loads(message) is None:
+        print('Неизвестный токен. Проверьте его или зарегистрируйте заново.')
+        return
+
+    logger.debug(message.decode())
 
     stream_writer.write(b'messsage' + b'\n\n')
     await stream_writer.drain()

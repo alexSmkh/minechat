@@ -1,14 +1,13 @@
 import asyncio
 import logging
 import os
-from pathlib import Path
 from datetime import datetime
+from pathlib import Path
 
 import configargparse
 
 from chat_api import connect_to_chat, read_chat
 from utils import write_file
-
 
 logger = logging.getLogger(__file__)
 

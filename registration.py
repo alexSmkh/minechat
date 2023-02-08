@@ -1,7 +1,7 @@
 import asyncio
-import aioconsole
-import json
 import logging
+
+import aioconsole
 
 from chat_api import connect_to_chat, register
 

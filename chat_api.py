@@ -1,12 +1,25 @@
 import asyncio
-import sys
-import aioconsole
 import json
+import sys
+
+import aioconsole
 
 
 async def submit_message(stream_writer, message: str) -> None:
     stream_writer.write(message.encode() + b'\n')
     await stream_writer.drain()
+
+
+async def authorise(
+    stream_reader: asyncio.StreamReader,
+    stream_writer: asyncio.StreamWriter,
+) -> str | None:
+    await stream_reader.readline()
+    await submit_message(stream_writer, '0d46d7b6-a773-11ed-ad76-0242ac11000')
+
+    token = await stream_reader.readline()
+
+    return json.loads(token)
 
 
 async def register(

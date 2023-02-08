@@ -23,7 +23,7 @@ async def main() -> None:
 
     registered_user_data = await register(stream_reader, stream_writer)
 
-    token_filepath = os.path.join(Path(__file__).parent.resolve(), '.token')
+    token_filepath = os.path.join(Path(__file__).parent.parent.resolve(), '.token')
     await write_file(registered_user_data['account_hash'], token_filepath)
 
     successful_message = (

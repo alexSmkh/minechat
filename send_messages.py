@@ -15,9 +15,9 @@ async def main() -> None:
     chat_port = '5050'
     stream_reader, stream_writer = await connect_to_chat(chat_host, chat_port)
 
-    token = await authorise(stream_reader, stream_writer)
+    auth_result = await authorise(stream_reader, stream_writer)
 
-    if token is None:
+    if not auth_result:
         await aioconsole.aprint('Unknown token. Check it or re-register it.')
         return
 

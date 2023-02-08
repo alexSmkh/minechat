@@ -1,8 +1,12 @@
 import asyncio
 import json
+import os
+from pathlib import Path
 import sys
 
 import aioconsole
+
+from utils import read_file
 
 
 async def submit_message(stream_writer, message: str) -> None:
@@ -13,13 +17,19 @@ async def submit_message(stream_writer, message: str) -> None:
 async def authorise(
     stream_reader: asyncio.StreamReader,
     stream_writer: asyncio.StreamWriter,
-) -> str | None:
+) -> bool:
     await stream_reader.readline()
-    await submit_message(stream_writer, '0d46d7b6-a773-11ed-ad76-0242ac11000')
 
-    token = await stream_reader.readline()
+    token_filepath = os.path.join(Path(__file__).parent.resolve(), '.token')
+    if not os.path.isfile(token_filepath):
+        return False
 
-    return json.loads(token)
+    token = await read_file(token_filepath)
+    await submit_message(stream_writer, token)
+
+    auth_result = await stream_reader.readline()
+
+    return not not json.loads(auth_result)
 
 
 async def register(

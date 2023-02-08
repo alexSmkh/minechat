@@ -21,11 +21,19 @@ python src/registraion.py --host [host] --port [port]
 ```
  After successful registration, the token will be written to the root of the project in the `.token` file.
 
+ ![](gifs/registration.gif)
+
+ ---
+
 2. To send messages you need to run the script:
 ```shell
 python src/sender --host [host] --port [port] --message [your message]
 ```
 To run the script in interactive mode, use `--interactive` instead of the `--message` arg.
+![](gifs/chat.gif)
+
+
+---
 
 3. To record a chat history, use the command:
 ```shell

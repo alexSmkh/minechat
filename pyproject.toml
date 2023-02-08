@@ -9,6 +9,7 @@ readme = "README.md"
 python = "^3.11.1"
 aiofiles = "^22.1.0"
 configargparse = "^1.5.3"
+aioconsole = "^0.6.0"
 
 
 [tool.poetry.group.dev.dependencies]

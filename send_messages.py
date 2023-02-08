@@ -22,7 +22,7 @@ async def main() -> None:
 
     message = await stream_reader.readline()
     if json.loads(message) is None:
-        print('Неизвестный токен. Проверьте его или зарегистрируйте заново.')
+        print('Unknown token. Check it or re-register it.')
         return
 
     logger.debug(message.decode())

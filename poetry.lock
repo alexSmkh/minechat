@@ -1,4 +1,12 @@
 [[package]]
+name = "aioconsole"
+version = "0.6.0"
+description = "Asynchronous console and interfaces for asyncio"
+category = "main"
+optional = false
+python-versions = ">=3.7"
+
+[[package]]
 name = "aiofiles"
 version = "22.1.0"
 description = "File support for asyncio."
@@ -35,9 +43,13 @@ requirements-deprecated-finder = ["pip-api", "pipreqs"]
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.11.1"
-content-hash = "48dcbe9866333613dc0fdfe791b5082350afacfb7dc4b767c2a30b0a1a84ebdd"
+content-hash = "fd3bd9a7697d1c125610fcec61bf42629928d8bd101e744888ace3272ff9c024"
 
 [metadata.files]
+aioconsole = [
+    {file = "aioconsole-0.6.0-py3-none-any.whl", hash = "sha256:2c3f29116d209ffe21c0ef2e5846882891819bd714d630e4350a4b19a61aac0a"},
+    {file = "aioconsole-0.6.0.tar.gz", hash = "sha256:ec08ca307bfc1d81ccc156d00b8c7eae510fe03a91a48d5aed95f50915b3e9d6"},
+]
 aiofiles = [
     {file = "aiofiles-22.1.0-py3-none-any.whl", hash = "sha256:1142fa8e80dbae46bb6339573ad4c8c0841358f79c6eb50a493dceca14621bad"},
     {file = "aiofiles-22.1.0.tar.gz", hash = "sha256:9107f1ca0b2a5553987a94a3c9959fe5b491fdf731389aa5b7b1bd0733e32de6"},

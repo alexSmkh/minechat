@@ -1,11 +1,20 @@
 import asyncio
+import logging
 from chat_api import connect_to_chat
 
 
+logger = logging.getLogger(__file__)
+
+
 async def main() -> None:
+    logging.basicConfig(format='%(levelname)s:sender:%(message)s', level=logging.DEBUG)
+
     chat_host = 'minechat.dvmn.org'
     chat_port = '5050'
-    _, stream_writer = await connect_to_chat(chat_host, chat_port)
+    stream_reader, stream_writer = await connect_to_chat(chat_host, chat_port)
+
+    message = await stream_reader.readline()
+    logger.debug(message.decode())
 
     stream_writer.write(b'0d46d7b6-a773-11ed-ad76-0242ac110002' + b'\n')
     await stream_writer.drain()

@@ -21,7 +21,7 @@ async def main() -> None:
         await aioconsole.aprint('Unknown token. Check it or re-register it.')
         return
 
-    await submit_message(stream_writer, 'message\n')
+    await submit_message(stream_writer, 'message', '\n')
 
 
 if __name__ == '__main__':

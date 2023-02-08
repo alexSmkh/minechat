@@ -9,8 +9,8 @@ import aioconsole
 from utils import read_file
 
 
-async def submit_message(stream_writer, message: str) -> None:
-    stream_writer.write(message.encode() + b'\n')
+async def submit_message(stream_writer, message: str, special_chars: str = '') -> None:
+    stream_writer.write(message.strip().encode() + b'\n' + special_chars.encode())
     await stream_writer.drain()
 
 

@@ -1,8 +1,12 @@
 import asyncio
-import logging
 import sys
 import aioconsole
 import json
+
+
+async def submit_message(stream_writer, message: str) -> None:
+    stream_writer.write(message.encode() + b'\n')
+    await stream_writer.drain()
 
 
 async def register(
@@ -11,15 +15,11 @@ async def register(
 ) -> dict:
     await stream_reader.readline()
 
-    stream_writer.write(b'\n')
-    await stream_writer.drain()
+    await submit_message(stream_writer, '')
 
     offer_to_enter_nickname = await stream_reader.readline()
-    await aioconsole.aprint(offer_to_enter_nickname.decode())
-
-    nickname = await aioconsole.ainput()
-    stream_writer.write(nickname.encode() + b'\n')
-    await stream_writer.drain()
+    nickname = await aioconsole.ainput(offer_to_enter_nickname.decode())
+    await submit_message(stream_writer, f'{nickname}')
 
     return json.loads(await stream_reader.readline())
 

@@ -1,8 +1,9 @@
 import asyncio
 import json
 import logging
+import aioconsole
 
-from chat_api import connect_to_chat
+from chat_api import connect_to_chat, submit_message
 
 logger = logging.getLogger(__file__)
 
@@ -17,18 +18,16 @@ async def main() -> None:
     message = await stream_reader.readline()
     logger.debug(message.decode())
 
-    stream_writer.write(b'0d46d7b6-a773-11ed-ad76-0242ac11000' + b'\n')
-    await stream_writer.drain()
+    await submit_message(stream_writer, '0d46d7b6-a773-11ed-ad76-0242ac11000')
 
     message = await stream_reader.readline()
     if json.loads(message) is None:
-        print('Unknown token. Check it or re-register it.')
+        await aioconsole.aprint('Unknown token. Check it or re-register it.')
         return
 
     logger.debug(message.decode())
 
-    stream_writer.write(b'messsage' + b'\n\n')
-    await stream_writer.drain()
+    await submit_message(stream_writer, 'message\n')
 
 
 if __name__ == '__main__':

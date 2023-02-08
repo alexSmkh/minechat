@@ -4,6 +4,7 @@ import logging
 import aioconsole
 
 from chat_api import authorise, connect_to_chat, submit_message
+from arg_parsers import create_sender_parser
 
 logger = logging.getLogger(__file__)
 
@@ -11,8 +12,10 @@ logger = logging.getLogger(__file__)
 async def main() -> None:
     logging.basicConfig(format='%(levelname)s:sender:%(message)s', level=logging.DEBUG)
 
-    chat_host = 'minechat.dvmn.org'
-    chat_port = '5050'
+    parser = create_sender_parser()
+    args = parser.parse_args()
+    chat_host, chat_port, message = args.host, args.port, args.message
+
     stream_reader, stream_writer = await connect_to_chat(chat_host, chat_port)
 
     auth_result = await authorise(stream_reader, stream_writer)
@@ -21,7 +24,7 @@ async def main() -> None:
         await aioconsole.aprint('Unknown token. Check it or re-register it.')
         return
 
-    await submit_message(stream_writer, 'message', '\n')
+    await submit_message(stream_writer, message, '\n')
 
 
 if __name__ == '__main__':

@@ -20,7 +20,7 @@ async def authorise(
 ) -> bool:
     await stream_reader.readline()
 
-    token_filepath = os.path.join(Path(__file__).parent.resolve(), '.token')
+    token_filepath = os.path.join(Path(__file__).parent.parent.resolve(), '.token')
     if not os.path.isfile(token_filepath):
         return False
 

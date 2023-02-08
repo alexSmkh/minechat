@@ -17,14 +17,9 @@ async def submit_message(stream_writer, message: str, special_chars: str = '') -
 async def authorise(
     stream_reader: asyncio.StreamReader,
     stream_writer: asyncio.StreamWriter,
+    token: str,
 ) -> bool:
     await stream_reader.readline()
-
-    token_filepath = os.path.join(Path(__file__).parent.parent.resolve(), '.token')
-    if not os.path.isfile(token_filepath):
-        return False
-
-    token = await read_file(token_filepath)
     await submit_message(stream_writer, token)
 
     auth_result = await stream_reader.readline()

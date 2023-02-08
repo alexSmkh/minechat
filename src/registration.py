@@ -1,5 +1,4 @@
 import asyncio
-import logging
 import os
 from pathlib import Path
 
@@ -9,12 +8,8 @@ from chat_api import register
 from arg_parsers import create_registration_parser
 from utils import write_file
 
-logger = logging.getLogger(__file__)
-
 
 async def main() -> None:
-    logging.basicConfig(format='%(levelname)s:sender:%(message)s', level=logging.DEBUG)
-
     parser = create_registration_parser()
     args = parser.parse_args()
     chat_host, chat_port = args.host, args.port

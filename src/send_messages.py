@@ -9,12 +9,8 @@ from chat_api import authorise, submit_message
 from arg_parsers import create_sender_parser
 from utils import read_file
 
-logger = logging.getLogger(__file__)
-
 
 async def main() -> None:
-    logging.basicConfig(format='%(levelname)s:sender:%(message)s', level=logging.DEBUG)
-
     parser = create_sender_parser()
     args = parser.parse_args()
     chat_host, chat_port, message = args.host, args.port, args.message

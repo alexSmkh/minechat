@@ -42,7 +42,10 @@ async def register(
     return json.loads(await stream_reader.readline())
 
 
-async def read_chat(stream_reader: asyncio.StreamReader) -> str:
+async def read_chat(
+    stream_reader: asyncio.StreamReader,
+    stream_writer: asyncio.StreamWriter,
+) -> str:
     max_error_count = 5
     error_counter = 0
     while True:
@@ -59,7 +62,9 @@ async def read_chat(stream_reader: asyncio.StreamReader) -> str:
                     'Internet connection problems. Please try again later',
                     file=sys.stderr,
                 )
-                break
+                stream_writer.close()
+                await stream_writer.wait_closed()
+                return
 
             print(
                 'Internet connection problems... Please wait...',

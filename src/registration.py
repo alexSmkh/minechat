@@ -5,7 +5,7 @@ from pathlib import Path
 
 import aioconsole
 
-from chat_api import connect_to_chat, register
+from chat_api import register
 from arg_parsers import create_registration_parser
 from utils import write_file
 
@@ -33,6 +33,9 @@ async def main() -> None:
         f'Your token is successfully written to the .token file'
     )
     await aioconsole.aprint(successful_message)
+
+    stream_writer.close()
+    await stream_writer.wait_closed()
 
 
 if __name__ == '__main__':

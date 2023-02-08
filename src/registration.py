@@ -25,7 +25,7 @@ async def main() -> None:
         'You have successfully registered!\n'
         f'Your nickname: {registered_user_data["nickname"]}\n'
         f'Your token: {registered_user_data["account_hash"]}\n'
-        f'Your token is successfully written to the .token file'
+        f'Your token is successfully written to the {token_filepath} file'
     )
     await aioconsole.aprint(successful_message)
 

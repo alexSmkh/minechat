@@ -7,6 +7,7 @@ import aioconsole
 
 from chat_api import authorise, submit_message
 from arg_parsers import create_sender_parser
+from context_managers import connection_manager
 from utils import read_file
 
 
@@ -15,39 +16,35 @@ async def main() -> None:
     args = parser.parse_args()
     chat_host, chat_port = args.host, args.port
 
-    stream_reader, stream_writer = await asyncio.open_connection(chat_host, chat_port)
+    async with connection_manager(chat_host, chat_port) as streams:
+        stream_reader, stream_writer = streams
 
-    token_filepath = os.path.join(Path(__file__).parent.parent.resolve(), '.token')
-    if not os.path.isfile(token_filepath):
-        await aioconsole.aprint('You do not have a token. Please register')
+        token_filepath = os.path.join(Path(__file__).parent.parent.resolve(), '.token')
+        if not os.path.isfile(token_filepath):
+            await aioconsole.aprint('You do not have a token. Please register')
 
-        stream_writer.close()
-        await stream_writer.wait_closed()
-        return
+            stream_writer.close()
+            await stream_writer.wait_closed()
+            return
 
-    token = await read_file(token_filepath)
+        token = await read_file(token_filepath)
 
-    auth_result = await authorise(stream_reader, stream_writer, token)
-    if not auth_result:
-        await aioconsole.aprint('Unknown token. Check it or re-register it.')
+        auth_result = await authorise(stream_reader, stream_writer, token)
+        if not auth_result:
+            await aioconsole.aprint('Unknown token. Check it or re-register it.')
 
-        stream_writer.close()
-        await stream_writer.wait_closed()
-        return
+            stream_writer.close()
+            await stream_writer.wait_closed()
+            return
 
-    if args.__dict__.get('interactive'):
-        while True:
-            message = await aioconsole.ainput('> ')
+        if args.__dict__.get('interactive'):
+            while True:
+                message = await aioconsole.ainput('> ')
+                await submit_message(stream_writer, message, '\n')
+        elif message := args.__dict__.get('message'):
             await submit_message(stream_writer, message, '\n')
-    elif message := args.__dict__.get('message'):
-        await submit_message(stream_writer, message, '\n')
-    else:
-        await aioconsole.ainput(
-            'You need to specify a message or enable interactive mode.'
-        )
-
-    stream_writer.close()
-    await stream_writer.wait_closed()
+        else:
+            await aioconsole.ainput('You need to specify a message or enable interactive mode.')
 
 
 if __name__ == '__main__':

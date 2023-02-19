@@ -5,6 +5,7 @@ from datetime import datetime
 
 from chat_api import read_chat
 from arg_parsers import create_record_history_parser
+from context_managers import connection_manager
 from utils import write_file
 
 logger = logging.getLogger(__file__)
@@ -28,14 +29,11 @@ async def main() -> None:
     args = parser.parse_args()
     chat_host, chat_port, history_filepath = args.host, args.port, args.history
 
-    stream_reader, stream_writer = await asyncio.open_connection(chat_host, chat_port)
-
-    await asyncio.gather(
-        record_chat_history(stream_reader, stream_writer, history_filepath),
-    )
-
-    stream_writer.close()
-    await stream_writer.wait_closed()
+    async with connection_manager(chat_host, chat_port) as streams:
+        stream_reader, stream_writer = streams
+        await asyncio.gather(
+            record_chat_history(stream_reader, stream_writer, history_filepath),
+        )
 
 
 if __name__ == '__main__':

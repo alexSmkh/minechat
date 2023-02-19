@@ -160,6 +160,5 @@ cython_debug/
 #.idea/
 
 # Project files
-config.yml
 minechat.history
 .token

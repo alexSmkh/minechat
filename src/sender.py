@@ -22,9 +22,6 @@ async def main() -> None:
         token_filepath = os.path.join(Path(__file__).parent.parent.resolve(), '.token')
         if not os.path.isfile(token_filepath):
             await aioconsole.aprint('You do not have a token. Please register')
-
-            stream_writer.close()
-            await stream_writer.wait_closed()
             return
 
         token = await read_file(token_filepath)
@@ -32,9 +29,6 @@ async def main() -> None:
         auth_result = await authorise(stream_reader, stream_writer, token)
         if not auth_result:
             await aioconsole.aprint('Unknown token. Check it or re-register it.')
-
-            stream_writer.close()
-            await stream_writer.wait_closed()
             return
 
         if args.__dict__.get('interactive'):

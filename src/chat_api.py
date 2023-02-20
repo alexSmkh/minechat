@@ -1,12 +1,9 @@
 import asyncio
 import json
-import os
-from pathlib import Path
 import sys
 
 import aioconsole
-
-from utils import read_file
+from exceptions import InvalidTokenError
 
 
 async def submit_message(stream_writer, message: str, special_chars: str = '') -> None:
@@ -18,13 +15,14 @@ async def authorise(
     stream_reader: asyncio.StreamReader,
     stream_writer: asyncio.StreamWriter,
     token: str,
-) -> bool:
+) -> None:
     await stream_reader.readline()
     await submit_message(stream_writer, token)
 
     auth_result = await stream_reader.readline()
 
-    return not not json.loads(auth_result)
+    if not json.loads(auth_result):
+        raise InvalidTokenError('Token is invalid. Check it or re-register it.')
 
 
 async def register(

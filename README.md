@@ -29,7 +29,7 @@ python src/registraion.py --host [host] --port [port]
 ```shell
 python src/sender --host [host] --port [port] --message [your message]
 ```
-To run the script in interactive mode, use `--interactive` instead of the `--message` arg.
+If you want to send only one message, specify the `--message` argument with your message. Otherwise the chat starts in interactive mode.
 ![](gifs/chat.gif)
 
 

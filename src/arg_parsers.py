@@ -30,7 +30,6 @@ def create_sender_parser() -> configargparse.ArgParser:
     parser.add('--config', type=str, is_config_file=True, help='Config file path')
     parser.add('--host', type=str, required=True, help='Chat host')
     parser.add('--port', type=str, required=True, help='Chat port')
-    parser.add('--interactive', action='store_true', help='Enable interactive mode')
     parser.add('--message', type=str, help='A message to send to the chat')
     return parser
 

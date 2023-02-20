@@ -4,8 +4,8 @@ from pathlib import Path
 
 import aioconsole
 
-from chat_api import register
 from arg_parsers import create_registration_parser
+from chat_api import register
 from context_managers import connection_manager
 from utils import write_file
 

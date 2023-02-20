@@ -3,6 +3,7 @@ import json
 import sys
 
 import aioconsole
+
 from exceptions import InvalidTokenError
 
 

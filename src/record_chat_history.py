@@ -2,9 +2,8 @@ import asyncio
 import logging
 from datetime import datetime
 
-
-from chat_api import read_chat
 from arg_parsers import create_record_history_parser
+from chat_api import read_chat
 from context_managers import connection_manager
 from utils import write_file
 

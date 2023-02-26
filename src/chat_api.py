@@ -16,15 +16,16 @@ async def authorise(
     stream_reader: asyncio.StreamReader,
     stream_writer: asyncio.StreamWriter,
     token: str,
-) -> None:
+) -> dict:
     await stream_reader.readline()
     await submit_message(stream_writer, token)
 
-    auth_result = await stream_reader.readline()
+    auth_result = json.loads(await stream_reader.readline())
 
-    if not json.loads(auth_result):
+    if not auth_result:
         raise InvalidTokenError('Token is invalid. Check it or re-register it.')
 
+    return auth_result
 
 async def register(
     stream_reader: asyncio.StreamReader,

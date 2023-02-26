@@ -1,8 +1,12 @@
-import tkinter as tk
 import asyncio
-from tkinter.scrolledtext import ScrolledText
+import tkinter as tk
 from enum import Enum
+from tkinter.scrolledtext import ScrolledText
+
 import gui
+from arg_parsers import create_record_history_parser
+from chat_api import read_chat
+from context_managers import connection_manager
 
 
 class TkAppClosed(Exception):
@@ -92,10 +96,14 @@ def create_status_panel(root_frame):
     nickname_label = tk.Label(connections_frame, height=1, fg='grey', font='arial 10', anchor='w')
     nickname_label.pack(side="top", fill=tk.X)
 
-    status_read_label = tk.Label(connections_frame, height=1, fg='grey', font='arial 10', anchor='w')
+    status_read_label = tk.Label(
+        connections_frame, height=1, fg='grey', font='arial 10', anchor='w'
+    )
     status_read_label.pack(side="top", fill=tk.X)
 
-    status_write_label = tk.Label(connections_frame, height=1, fg='grey', font='arial 10', anchor='w')
+    status_write_label = tk.Label(
+        connections_frame, height=1, fg='grey', font='arial 10', anchor='w'
+    )
     status_write_label.pack(side="top", fill=tk.X)
 
     return (nickname_label, status_read_label, status_write_label)
@@ -130,16 +138,30 @@ async def draw(messages_queue, sending_queue, status_updates_queue):
     await asyncio.gather(
         update_tk(root_frame),
         update_conversation_history(conversation_panel, messages_queue),
-        update_status_panel(status_labels, status_updates_queue)
+        update_status_panel(status_labels, status_updates_queue),
     )
 
 
+async def render_messages(host: str, port: str, queue: asyncio.Queue) -> None:
+    async with connection_manager(host, port) as streams:
+        stream_reader, stream_writer = streams
+        async for message in read_chat(stream_reader, stream_writer):
+            queue.put_nowait(message)
+
+
 async def main() -> None:
+    parser = create_record_history_parser()
+    args = parser.parse_args()
+    chat_host, chat_port = args.host, args.port
+
     messages_queue = asyncio.Queue()
     sending_queue = asyncio.Queue()
     status_updates_queue = asyncio.Queue()
 
-    await gui.draw(messages_queue, sending_queue, status_updates_queue)
+    await asyncio.gather(
+        gui.draw(messages_queue, sending_queue, status_updates_queue),
+        render_messages(chat_host, chat_port, messages_queue),
+    )
 
 
 if __name__ == '__main__':

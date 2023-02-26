@@ -10,15 +10,10 @@ from utils import write_file
 logger = logging.getLogger(__file__)
 
 
-async def record_chat_history(
-    stream_reader: asyncio.StreamReader,
-    stream_writer: asyncio.StreamWriter,
-    history_filepath,
-) -> None:
-    async for message in read_chat(stream_reader, stream_writer):
-        time = datetime.now().strftime('%d.%m.%y %H:%M:%S')
-        logger.debug(message)
-        await write_file(f'[{time}] {message}', history_filepath, mode='a')
+async def save_message(message: str, history_filepath: str) -> None:
+    time = datetime.now().strftime('%d.%m.%y %H:%M:%S')
+    logger.debug(message)
+    await write_file(f'[{time}] {message}', history_filepath, mode='a')
 
 
 async def main() -> None:
@@ -30,9 +25,8 @@ async def main() -> None:
 
     async with connection_manager(chat_host, chat_port) as streams:
         stream_reader, stream_writer = streams
-        await asyncio.gather(
-            record_chat_history(stream_reader, stream_writer, history_filepath),
-        )
+        async for message in read_chat(stream_reader, stream_writer):
+            await save_message(message, history_filepath)
 
 
 if __name__ == '__main__':

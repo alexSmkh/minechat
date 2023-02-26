@@ -7,6 +7,7 @@ import gui
 from arg_parsers import create_record_history_parser
 from chat_api import read_chat
 from context_managers import connection_manager
+from record_chat_history import save_message
 
 
 class TkAppClosed(Exception):
@@ -142,17 +143,18 @@ async def draw(messages_queue, sending_queue, status_updates_queue):
     )
 
 
-async def render_messages(host: str, port: str, queue: asyncio.Queue) -> None:
+async def read_messages(host: str, port: str, queue: asyncio.Queue, history_filepath: str) -> None:
     async with connection_manager(host, port) as streams:
         stream_reader, stream_writer = streams
         async for message in read_chat(stream_reader, stream_writer):
+            await save_message(message, history_filepath)
             queue.put_nowait(message)
 
 
 async def main() -> None:
     parser = create_record_history_parser()
     args = parser.parse_args()
-    chat_host, chat_port = args.host, args.port
+    chat_host, chat_port, history_filepath = args.host, args.port, args.history
 
     messages_queue = asyncio.Queue()
     sending_queue = asyncio.Queue()
@@ -160,7 +162,7 @@ async def main() -> None:
 
     await asyncio.gather(
         gui.draw(messages_queue, sending_queue, status_updates_queue),
-        render_messages(chat_host, chat_port, messages_queue),
+        read_messages(chat_host, chat_port, messages_queue, history_filepath),
     )
 
 

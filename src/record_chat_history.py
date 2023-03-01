@@ -10,9 +10,11 @@ from utils import write_file
 logger = logging.getLogger(__file__)
 
 
-async def save_message(message: str, history_filepath: str) -> None:
+async def save_message(message: str, history_filepath: str, log: bool = False) -> None:
+    if log:
+        logger.debug(message)
+
     time = datetime.now().strftime('%d.%m.%y %H:%M:%S')
-    logger.debug(message)
     await write_file(f'[{time}] {message}', history_filepath, mode='a')
 
 
@@ -26,7 +28,7 @@ async def main() -> None:
     async with connection_manager(chat_host, chat_port) as streams:
         stream_reader, stream_writer = streams
         async for message in read_chat(stream_reader, stream_writer):
-            await save_message(message, history_filepath)
+            await save_message(message, history_filepath, log=True)
 
 
 if __name__ == '__main__':

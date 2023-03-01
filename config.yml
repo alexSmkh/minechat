@@ -1,2 +1,3 @@
 host: minechat.dvmn.org
-port: 5000
+sending_port: 5050
+reading_port: 5000

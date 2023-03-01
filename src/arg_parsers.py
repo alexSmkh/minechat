@@ -54,8 +54,8 @@ def create_client_parser() -> configargparse.ArgParser:
     )
     parser.add('--config', type=str, is_config_file=True, help='Config file path')
     parser.add('--host', type=str, required=True, help='Chat host')
-    parser.add('--sending-port', type=str, required=True, help='Chat port for sending messages')
-    parser.add('--reading-port', type=str, required=True, help='Chat port for reading messages')
+    parser.add('--sending_port', type=str, required=True, help='Chat port for sending messages')
+    parser.add('--reading_port', type=str, required=True, help='Chat port for reading messages')
     parser.add(
         '--history',
         default=os.path.join(root_path, 'minechat.history'),

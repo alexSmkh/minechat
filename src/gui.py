@@ -1,20 +1,9 @@
 import asyncio
-from sys import stderr
-import sys
+from pickle import READONLY_BUFFER
 import tkinter as tk
 from enum import Enum
 from tkinter.scrolledtext import ScrolledText
 from tkinter import messagebox
-
-import aioconsole
-
-from arg_parsers import create_record_history_parser
-from chat_api import authorise, read_chat
-from context_managers import connection_manager
-from exceptions import InvalidTokenError, TokenDoesNotExistError
-from record_chat_history import save_message
-from sender import read_token, run_sender
-
 
 class TkAppClosed(Exception):
     pass
@@ -151,58 +140,3 @@ async def draw(messages_queue, sending_queue, status_updates_queue):
         update_conversation_history(conversation_panel, messages_queue),
         update_status_panel(status_labels, status_updates_queue),
     )
-
-
-async def read_messages(host: str, port: str, queue: asyncio.Queue, history_filepath: str) -> None:
-    async with connection_manager(host, port) as streams:
-        stream_reader, stream_writer = streams
-        async for message in read_chat(stream_reader, stream_writer):
-            await save_message(message, history_filepath)
-            queue.put_nowait(message)
-
-
-async def send_messages(host, port, sending_queue):
-    async with connection_manager(host, port) as streams:
-        stream_reader, stream_writer = streams
-
-        try:
-            token = await read_token()
-            user = await authorise(stream_reader, stream_writer, token)
-            await aioconsole.aprint(f'Authorization is complete. User: {user["nickname"]}.')
-        except TokenDoesNotExistError:
-            err_message = 'Please register'
-            show_alert('Token doesn\'t exist', err_message)
-            raise asyncio.CancelledError(err_message)
-        except InvalidTokenError:
-            err_message = 'Please check the token or re-register again'
-            show_alert('Invalid token', err_message)
-            raise asyncio.CancelledError(err_message)
-
-        while True:
-            message = await sending_queue.get()
-            if message:
-                await run_sender(stream_writer, message)
-
-
-async def main() -> None:
-    parser = create_record_history_parser()
-    args = parser.parse_args()
-    chat_host, chat_port, history_filepath = args.host, args.port, args.history
-
-    messages_queue = asyncio.Queue()
-    sending_queue = asyncio.Queue()
-    status_updates_queue = asyncio.Queue()
-
-    try:
-        await asyncio.gather(
-            draw(messages_queue, sending_queue, status_updates_queue),
-            read_messages(chat_host, chat_port, messages_queue, history_filepath),
-            send_messages(chat_host, '5050', sending_queue),
-        )
-    except asyncio.CancelledError as err:
-        print(err, file=sys.stderr)
-        sys.exit(1)
-
-
-if __name__ == '__main__':
-    asyncio.run(main())

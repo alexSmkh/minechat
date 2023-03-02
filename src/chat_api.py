@@ -3,6 +3,7 @@ import json
 import sys
 
 import aioconsole
+from async_timeout import timeout
 from context_managers import connection_manager
 
 from exceptions import InvalidTokenError

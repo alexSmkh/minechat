@@ -10,7 +10,14 @@ from exceptions import InvalidTokenError, TokenDoesNotExistError
 from utils import read_token
 
 
-async def run_sender(host: str, port: str, token: str, message: str | None) -> None:
+async def run_sender(
+    host: str,
+    port: str,
+    token: str,
+    message: str = None,
+    sending_queue: asyncio.Queue = None,
+    watchdog_queue: asyncio.Queue = None,
+) -> None:
     async with connection_manager(host, port) as streams:
         _, stream_writer = streams
 
@@ -19,6 +26,12 @@ async def run_sender(host: str, port: str, token: str, message: str | None) -> N
         if message is not None:
             await submit_message(stream_writer, message, '\n')
             return
+
+        if sending_queue is not None:
+            while True:
+                message = await sending_queue.get()
+                await submit_message(stream_writer, message, '\n')
+                watchdog_queue.put_nowait('Message sent')
 
         while True:
             message = await aioconsole.ainput('> ')

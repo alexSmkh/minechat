@@ -1,5 +1,4 @@
 import asyncio
-from pickle import READONLY_BUFFER
 import tkinter as tk
 from enum import Enum
 from tkinter.scrolledtext import ScrolledText

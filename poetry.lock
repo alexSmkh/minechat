@@ -15,6 +15,14 @@ optional = false
 python-versions = ">=3.7,<4.0"
 
 [[package]]
+name = "async-timeout"
+version = "4.0.2"
+description = "Timeout context manager for asyncio programs"
+category = "main"
+optional = false
+python-versions = ">=3.6"
+
+[[package]]
 name = "configargparse"
 version = "1.5.3"
 description = "A drop-in replacement for argparse that allows options to also be set via config files and/or environment variables."
@@ -43,7 +51,7 @@ requirements-deprecated-finder = ["pip-api", "pipreqs"]
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.11.1"
-content-hash = "fd3bd9a7697d1c125610fcec61bf42629928d8bd101e744888ace3272ff9c024"
+content-hash = "14d4661c876d6a8670f61a2d0fc864acae30f963fcca2567df7d1b3d5b28ca77"
 
 [metadata.files]
 aioconsole = [
@@ -53,6 +61,10 @@ aioconsole = [
 aiofiles = [
     {file = "aiofiles-22.1.0-py3-none-any.whl", hash = "sha256:1142fa8e80dbae46bb6339573ad4c8c0841358f79c6eb50a493dceca14621bad"},
     {file = "aiofiles-22.1.0.tar.gz", hash = "sha256:9107f1ca0b2a5553987a94a3c9959fe5b491fdf731389aa5b7b1bd0733e32de6"},
+]
+async-timeout = [
+    {file = "async-timeout-4.0.2.tar.gz", hash = "sha256:2163e1640ddb52b7a8c80d0a67a08587e5d245cc9c553a74a847056bc2976b15"},
+    {file = "async_timeout-4.0.2-py3-none-any.whl", hash = "sha256:8ca1e4fcf50d07413d66d1a5e416e42cfdf5851c981d679a09851a6853383b3c"},
 ]
 configargparse = [
     {file = "ConfigArgParse-1.5.3-py3-none-any.whl", hash = "sha256:18f6535a2db9f6e02bd5626cc7455eac3e96b9ab3d969d366f9aafd5c5c00fe7"},

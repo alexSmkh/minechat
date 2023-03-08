@@ -11,6 +11,7 @@ aiofiles = "^22.1.0"
 configargparse = "^1.5.3"
 aioconsole = "^0.6.0"
 async-timeout = "^4.0.2"
+anyio = "^3.6.2"
 
 
 [tool.poetry.group.dev.dependencies]

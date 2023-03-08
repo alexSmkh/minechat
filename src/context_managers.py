@@ -3,8 +3,9 @@ from contextlib import asynccontextmanager
 
 
 @asynccontextmanager
-async def connection_manager(host, port):
+async def connection_manager(host: str, port: str) -> None:
     writer = None
+
     try:
         reader, writer = await asyncio.open_connection(host, port)
         yield reader, writer

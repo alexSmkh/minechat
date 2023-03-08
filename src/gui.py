@@ -1,8 +1,10 @@
 import asyncio
 import tkinter as tk
+from tkinter import simpledialog
 from enum import Enum
 from tkinter.scrolledtext import ScrolledText
 from tkinter import messagebox
+from typing import Dict
 
 class TkAppClosed(Exception):
     pass
@@ -37,8 +39,14 @@ def process_new_message(input_field, sending_queue):
     input_field.delete(0, tk.END)
 
 
-def show_alert(title, message):
-    messagebox.showinfo(title, message)
+async def show_registration_window(queues: Dict[str, asyncio.Queue]) -> str:
+    root = tk.Tk()
+    root.withdraw()
+
+    nickname = simpledialog.askstring('Registration', 'Choose your nickname:')
+    root.destroy()
+
+    return nickname
 
 
 async def update_tk(root_frame, interval=1 / 120):
@@ -108,7 +116,7 @@ def create_status_panel(root_frame):
     return (nickname_label, status_read_label, status_write_label)
 
 
-async def draw(messages_queue, sending_queue, status_updates_queue):
+async def draw(queues: Dict[str, asyncio.Queue]):
     root = tk.Tk()
 
     root.title('Чат Майнкрафтера')
@@ -124,11 +132,17 @@ async def draw(messages_queue, sending_queue, status_updates_queue):
     input_field = tk.Entry(input_frame)
     input_field.pack(side="left", fill=tk.X, expand=True)
 
-    input_field.bind("<Return>", lambda event: process_new_message(input_field, sending_queue))
+    input_field.bind(
+        "<Return>",
+        lambda event: process_new_message(input_field, queues['sending']),
+    )
 
     send_button = tk.Button(input_frame)
     send_button["text"] = "Отправить"
-    send_button["command"] = lambda: process_new_message(input_field, sending_queue)
+    send_button["command"] = lambda: process_new_message(
+        input_field,
+        queues['sending'],
+    )
     send_button.pack(side="left")
 
     conversation_panel = ScrolledText(root_frame, wrap='none')
@@ -136,6 +150,6 @@ async def draw(messages_queue, sending_queue, status_updates_queue):
 
     await asyncio.gather(
         update_tk(root_frame),
-        update_conversation_history(conversation_panel, messages_queue),
-        update_status_panel(status_labels, status_updates_queue),
+        update_conversation_history(conversation_panel, queues['messages']),
+        update_status_panel(status_labels, queues['status_updates']),
     )

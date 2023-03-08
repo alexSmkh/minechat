@@ -53,11 +53,7 @@ async def show_registration_window(queues: Dict[str, asyncio.Queue]) -> str:
 
 async def update_tk(root_frame, interval=1 / 120):
     while True:
-        try:
-            root_frame.update()
-        except tk.TclError:
-            # if application has been destroyed/closed
-            raise TkAppClosed()
+        root_frame.update()
         await asyncio.sleep(interval)
 
 
@@ -155,5 +151,6 @@ async def draw(queues: Dict[str, asyncio.Queue]):
             task_group.start_soon(update_tk, root_frame)
             task_group.start_soon(update_conversation_history, conversation_panel, queues['messages'])
             task_group.start_soon(update_status_panel, status_labels, queues['status_updates'])
-    except tkinter.TclError:
-        raise TkAppClosed
+    except tk.TclError:
+        # if application has been destroyed/closed
+        raise TkAppClosed()

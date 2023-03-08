@@ -74,10 +74,21 @@ async def handle_connections(
                 task_group.start_soon(ping_pong, host, sending_port)
                 task_group.start_soon(read_messages, host, reading_port, queues, history_filepath)
                 task_group.start_soon(run_sender, host, sending_port, queues)
-        except (ConnectionError, socket.gaierror, anyio.ExceptionGroup):
+        except (ConnectionError, socket.gaierror):
             queues['watchdog'].put_nowait(
                 'There\'s a problem with the network. Let\'s try to reconnect...',
             )
+        except anyio.ExceptionGroup as e:
+            for error in e.exceptions:
+                if isinstance(error, socket.gaierror) and error.errno == -3:
+                    # Handle the 'Temporary failure in name resolution' error
+                    queues['watchdog'].put_nowait(
+                        'There\'s a problem with the network. Let\'s try to reconnect...',
+                    )
+                else:
+                    queues['watchdog'].put_nowait(f'Error occuried:\n{str(e)}')
+
+        finally:
             queues['status_updates'].put_nowait(SendingConnectionStateChanged.CLOSED)
             queues['status_updates'].put_nowait(ReadConnectionStateChanged.CLOSED)
             await asyncio.sleep(5)

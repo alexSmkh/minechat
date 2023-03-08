@@ -2,6 +2,7 @@ import asyncio
 import tkinter as tk
 from tkinter import simpledialog
 from enum import Enum
+import tkinter
 from tkinter.scrolledtext import ScrolledText
 from typing import Dict
 
@@ -149,7 +150,10 @@ async def draw(queues: Dict[str, asyncio.Queue]):
     conversation_panel = ScrolledText(root_frame, wrap='none')
     conversation_panel.pack(side="top", fill="both", expand=True)
 
-    async with anyio.create_task_group() as task_group:
-        task_group.start_soon(update_tk, root_frame)
-        task_group.start_soon(update_conversation_history, conversation_panel, queues['messages'])
-        task_group.start_soon(update_status_panel, status_labels, queues['status_updates'])
+    try:
+        async with anyio.create_task_group() as task_group:
+            task_group.start_soon(update_tk, root_frame)
+            task_group.start_soon(update_conversation_history, conversation_panel, queues['messages'])
+            task_group.start_soon(update_status_panel, status_labels, queues['status_updates'])
+    except tkinter.TclError:
+        raise TkAppClosed

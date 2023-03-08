@@ -3,6 +3,7 @@ import logging
 import os
 import socket
 import sys
+import tkinter
 from typing import Dict
 import anyio
 
@@ -17,6 +18,7 @@ from gui import (
     NicknameReceived,
     ReadConnectionStateChanged,
     SendingConnectionStateChanged,
+    TkAppClosed,
     draw,
     show_registration_window,
 )
@@ -135,8 +137,7 @@ async def main() -> None:
                 history_filepath,
                 queues,
             )
-    except asyncio.CancelledError as err:
-        print(err, file=sys.stderr)
+    except (TkAppClosed, KeyboardInterrupt):
         sys.exit(1)
 
 

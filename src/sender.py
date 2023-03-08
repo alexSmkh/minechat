@@ -1,5 +1,6 @@
 import asyncio
 import sys
+from tkinter.messagebox import QUESTION
 from typing import Dict
 
 import aioconsole
@@ -15,11 +16,11 @@ from utils import read_token
 async def run_sender(
     host: str,
     port: str,
-    queues: Dict[str, asyncio.Queue] = {},
+    queues: asyncio.Queue = None,
     message: str = None,
 ) -> None:
-    status_queue = queues.get('status_updates')
-    if status_queue is not None:
+    if queues is not None:
+        status_queue = queues.get('status_updates')
         status_queue.put_nowait(SendingConnectionStateChanged.INITIATED)
 
     async with connection_manager(host, port) as streams:
@@ -32,9 +33,10 @@ async def run_sender(
             await submit_message(stream_writer, message, '\n')
             return
 
-        sending_queue = queues.get('sending')
-        watchdog_queue = queues.get('watchdog')
-        if sending_queue is not None:
+        if queues is not None:
+            sending_queue = queues.get('sending')
+            watchdog_queue = queues.get('watchdog')
+
             status_queue.put_nowait(SendingConnectionStateChanged.ESTABLISHED)
             while True:
                 message = await sending_queue.get()
@@ -58,7 +60,7 @@ async def main() -> None:
         await aioconsole.aprint(err)
         return
 
-    await run_sender(host, port, token, args.__dict__.get('message'))
+    await run_sender(host, port, message=args.__dict__.get('message'))
 
 
 if __name__ == '__main__':

@@ -2,6 +2,9 @@
 
 Client for anonymous chat.
 
+
+![](gifs/gui.gif)
+
 ### How to install
 You need:
 - Python >= 3.11.1
@@ -13,7 +16,13 @@ poetry install
 poetry shell
 ```
 
-### How to run
+
+### How to run GUI
+```shell
+python src/client.py
+```
+
+### How to run CLI
 
 1. Register and get a token:
 ```shell
@@ -47,7 +56,8 @@ For example:
 
 ```yaml
 host: minechat.dvmn.org
-port: 5000
+sending_port: 5050
+reading_port: 5000
 history: /path/to/history_file.txt
 ```
 

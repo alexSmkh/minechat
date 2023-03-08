@@ -81,7 +81,6 @@ async def handle_connections(
             await asyncio.sleep(5)
 
 
-
 async def auth_user(host: str, port: str, queues: asyncio.Queue) -> None:
     while True:
         try:

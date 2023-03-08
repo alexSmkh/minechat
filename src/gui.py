@@ -3,8 +3,9 @@ import tkinter as tk
 from tkinter import simpledialog
 from enum import Enum
 from tkinter.scrolledtext import ScrolledText
-from tkinter import messagebox
 from typing import Dict
+
+import anyio
 
 class TkAppClosed(Exception):
     pass
@@ -148,8 +149,7 @@ async def draw(queues: Dict[str, asyncio.Queue]):
     conversation_panel = ScrolledText(root_frame, wrap='none')
     conversation_panel.pack(side="top", fill="both", expand=True)
 
-    await asyncio.gather(
-        update_tk(root_frame),
-        update_conversation_history(conversation_panel, queues['messages']),
-        update_status_panel(status_labels, queues['status_updates']),
-    )
+    async with anyio.create_task_group() as task_group:
+        task_group.start_soon(update_tk, root_frame)
+        task_group.start_soon(update_conversation_history, conversation_panel, queues['messages'])
+        task_group.start_soon(update_status_panel, status_labels, queues['status_updates'])
